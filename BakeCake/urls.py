@@ -19,9 +19,11 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
 
-from foodcartapp.views import lk_order
+from foodcartapp.views import lk_order, index, lk
 
 urlpatterns = ([
     path('admin/', admin.site.urls),
-    path('lk_order/', lk_order)
+    path('lk_order/', lk_order),
+    path('', index),
+    path('lk/', lk)
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT))
