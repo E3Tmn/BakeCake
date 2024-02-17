@@ -1,1 +1,2 @@
 Django~=5.0.2
+django-phonenumber-field[phonenumbers]==7.1.0

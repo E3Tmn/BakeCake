@@ -1,13 +1,20 @@
 from django.db import models
 
 
-# Create your models here.
-class Cake(models.Model):
-    comment = models.CharField(
-        'Комментарий',
-        max_length=50,
-        default='Без подписи'
+class Order(models.Model):
+    name = models.CharField(
+        'Имя клиента',
+        max_length=50
     )
+    # phone = PhoneNumberField(
+    #     'Номер телефона',
+    #     db_index=True,
+    # )
+    # email
+    # address
+    # date
+    # time
+    # delivery_comments
 
 
 class Level(models.Model):
@@ -24,11 +31,6 @@ class Level(models.Model):
     cost = models.IntegerField(
         'Стоимость',
         default=0
-    )
-    cake = models.ForeignKey(
-        Cake,
-        verbose_name='Торт',
-        on_delete=models.CASCADE
     )
 
     def save(self, *args, **kwargs):
@@ -58,11 +60,6 @@ class Form(models.Model):
     cost = models.IntegerField(
         'Стоимость',
         default=0
-    )
-    cake = models.ForeignKey(
-        Cake,
-        verbose_name='Торт',
-        on_delete=models.CASCADE
     )
 
     def save(self, *args, **kwargs):
@@ -96,11 +93,6 @@ class Topping(models.Model):
     cost = models.IntegerField(
         'Стоимость',
         default=0
-    )
-    cake = models.ForeignKey(
-        Cake,
-        verbose_name='Торт',
-        on_delete=models.CASCADE
     )
 
     def save(self, *args, **kwargs):
@@ -138,11 +130,6 @@ class Berries(models.Model):
         'Стоимость',
         default=0
     )
-    cake = models.ForeignKey(
-        Cake,
-        verbose_name='Торт',
-        on_delete=models.CASCADE
-    )
 
     def save(self, *args, **kwargs):
         if self.berries == 'Ежевика':
@@ -177,11 +164,6 @@ class Decor(models.Model):
         'Стоимость',
         default=0
     )
-    cake = models.ForeignKey(
-        Cake,
-        verbose_name='Торт',
-        on_delete=models.CASCADE
-    )
 
     def save(self, *args, **kwargs):
         if self.decor == 'Фисташки':
@@ -212,11 +194,6 @@ class Words(models.Model):
         'Стоимость',
         default=0
     )
-    cake = models.ForeignKey(
-        Cake,
-        verbose_name='Торт',
-        on_delete=models.CASCADE
-    )
 
     def save(self, *args, **kwargs):
         if self.words:
@@ -225,3 +202,54 @@ class Words(models.Model):
             self.cost = 0
 
         super(Words, self).save(*args, **kwargs)
+
+
+class Cake(models.Model):
+    comment = models.CharField(
+        'Комментарий',
+        max_length=50,
+        default='Без подписи'
+    )
+    order = models.ForeignKey(
+        Order,
+        verbose_name='Заказ',
+        on_delete=models.CASCADE,
+        related_name='cakes',
+        null=True
+    )
+    level = models.ForeignKey(
+        Level,
+        verbose_name='Уровень',
+        on_delete=models.CASCADE,
+        null=True
+    )
+    form = models.ForeignKey(
+        Form,
+        verbose_name='Форма',
+        on_delete=models.CASCADE,
+        null=True
+    )
+    topping = models.ForeignKey(
+        Topping,
+        verbose_name='Топпинг',
+        on_delete=models.CASCADE,
+        null=True
+    )
+    berries = models.ForeignKey(
+        Berries,
+        verbose_name='Ягоды',
+        on_delete=models.CASCADE,
+        null=True
+    )
+    decor = models.ForeignKey(
+        Decor,
+        verbose_name='Декор',
+        on_delete=models.CASCADE,
+        null=True
+    )
+    words = models.ForeignKey(
+        Words,
+        verbose_name='Слова',
+        on_delete=models.CASCADE,
+        null=True
+    )
