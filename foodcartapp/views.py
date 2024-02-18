@@ -1,4 +1,5 @@
 import json
+from urllib.parse import parse_qs
 
 from django.http import JsonResponse
 from django.shortcuts import render
@@ -16,45 +17,48 @@ def lk_order(request):
 
 def index(request):
     if request.method == 'GET':
-        levels = request.GET.get('LEVELS')
-        forms = request.GET.get('FORM')
-        toppings = request.GET.get('TOPPING')
-        berriess = request.GET.get('BERRIES')
-        decors = request.GET.get('DECOR')
-        wordss = request.GET.get('WORDS')
-        comments = request.GET.get('COMMENTS')
-        name = request.GET.get('NAME')
-        phone = request.GET.get('PHONE')
-        email = request.GET.get('EMAIL')
-        address = request.GET.get('ADDRESS')
-        date = request.GET.get('DATE')
-        time = request.GET.get('TIME')
-        delivery_comments = request.GET.get('DELIVCOMMENTS')
-
-        order = Order.objects.get_or_create(name=name)
-        level = Level.objects.get_or_create(level=levels)
-        form = Form.objects.get_or_create(form=forms)
-        topping = Topping.objects.get_or_create(topping=toppings)
-        berries = Berries.objects.get_or_create(berries=berriess)
-        decor = Decor.objects.get_or_create(decor=decors)
-        words = Words.objects.get_or_create(words=wordss)
-        Cake.objects.create(
-            comment=comments,
+        return render(request, 'index.html')
+    elif request.method == 'POST':
+        data_str = request.body.decode('utf-8')
+        data_dict = parse_qs(data_str)
+        print(data_dict)
+        order = Order.objects.create(
+            name=data_dict['NAME'][0],
+            phone=data_dict['PHONE'][0],
+            email=data_dict['EMAIL'][0],
+            address=data_dict['ADDRESS'][0],
+            date=data_dict['DATE'][0],
+            time=data_dict['TIME'][0],
+        )
+        if 'DELIVCOMMENTS' in data_dict:
+            order.delivery_comments = data_dict['DELIVCOMMENTS'][0]
+            order.save()
+        level, created = Level.objects.get_or_create(level=data_dict['LEVELS'][0])
+        form, created = Form.objects.get_or_create(form=data_dict['FORM'][0])
+        topping, created = Topping.objects.get_or_create(topping=data_dict['TOPPING'][0])
+        berries, created = Berries.objects.get_or_create(berries=data_dict['BERRIES'][0])
+        decor, created = Decor.objects.get_or_create(decor=data_dict['DECOR'][0])
+        cake = Cake.objects.create(
             order=order,
             level=level,
             form=form,
             topping=topping,
             berries=berries,
-            decor=decor,
-            words=words
+            decor=decor
         )
+        if 'WORDS' in data_dict:
+            words, created = Words.objects.get_or_create(words=data_dict['WORDS'][0])
+            cake.words = words
+            cake.save()
+        if 'COMMENTS' in data_dict:
+            cake.comment = data_dict['COMMENTS'][0]
+            cake.save()
 
         return render(request, 'index.html')
     else:
         return JsonResponse({
             'error': 'Method not allowed',
         })
-
 
 
 def lk(request):

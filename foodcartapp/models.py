@@ -1,4 +1,5 @@
 from django.db import models
+from phonenumber_field.modelfields import PhoneNumberField
 
 
 class Order(models.Model):
@@ -6,15 +7,33 @@ class Order(models.Model):
         'Имя клиента',
         max_length=50
     )
-    # phone = PhoneNumberField(
-    #     'Номер телефона',
-    #     db_index=True,
-    # )
-    # email
-    # address
-    # date
-    # time
-    # delivery_comments
+    phone = PhoneNumberField(
+        'Номер телефона',
+        db_index=True,
+        null=True
+    )
+    email = models.CharField(
+        'Имейл',
+        max_length=50,
+        null=True
+    )
+    address = models.CharField(
+        'адрес',
+        max_length=100,
+        null=True
+    )
+    date = models.DateField(
+        'Дата создания заказа',
+        null=True
+    )
+    time = models.TimeField(
+        'Время создания заказа',
+        null=True
+    )
+    delivery_comments = models.TextField(
+        max_length=250,
+        null=True
+    )
 
 
 class Level(models.Model):

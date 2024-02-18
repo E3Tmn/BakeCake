@@ -283,7 +283,8 @@
 			</section>
 
 			<section class="row pt-header" id="step4" v-if="Designed">
-				<form class="d-none">
+				<form class="d-none" method="post">
+					{% csrf_token %}
 					<input v-model="Levels" value="1" type="radio" name="LEVELS">
 					<input v-model="Levels" value="2" type="radio" name="LEVELS">
 					<input v-model="Levels" value="3" type="radio" name="LEVELS">
