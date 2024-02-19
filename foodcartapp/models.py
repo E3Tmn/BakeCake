@@ -1,4 +1,7 @@
+from datetime import datetime
+
 from django.db import models
+from django.utils import timezone
 from phonenumber_field.modelfields import PhoneNumberField
 
 
@@ -30,11 +33,11 @@ class Order(models.Model):
         null=True
     )
     date = models.DateField(
-        'Дата создания заказа',
+        'Дата доставки',
         null=True
     )
     time = models.TimeField(
-        'Время создания заказа',
+        'Время доставки',
         null=True
     )
     delivery_comments = models.TextField(
@@ -48,6 +51,33 @@ class Order(models.Model):
         related_name='orders',
         null=True
     )
+    status = models.CharField(
+        'Статус',
+        max_length=25,
+        choices=(
+            ('В доставке', 'В доставке'),
+            ('Доставлен', 'Доставлен'),
+        ),
+        default='В доставке'
+    )
+    cost = models.IntegerField(
+        'Стоимость',
+        default=0
+    )
+
+    def update_status_if_delivered(self):
+        current_datetime = timezone.now()
+        delivery_datetime = datetime.combine(self.date, self.time).astimezone()
+
+        if current_datetime >= delivery_datetime:
+            self.status = 'Доставлен'
+            self.save()
+
+    def sum_cost(self):
+        cake = self.cakes.first()
+        sum = cake.level.cost + cake.form.cost + cake.topping.cost + cake.berries.cost + cake.decor.cost + cake.words.cost
+        self.cost = sum
+        self.save()
 
 
 class Level(models.Model):

@@ -21,7 +21,6 @@ def index(request):
     elif request.method == 'POST':
         data_str = request.body.decode('utf-8')
         data_dict = parse_qs(data_str)
-        print(data_dict)
         if 'REG' in data_dict:
             account, created = Account.objects.get_or_create(
                 phone=data_dict['REG'][0]
@@ -45,19 +44,29 @@ def index(request):
             if 'DELIVCOMMENTS' in data_dict:
                 order.delivery_comments = data_dict['DELIVCOMMENTS'][0]
                 order.save()
-            level, created = Level.objects.get_or_create(level=data_dict['LEVELS'][0])
-            form, created = Form.objects.get_or_create(form=data_dict['FORM'][0])
-            topping, created = Topping.objects.get_or_create(topping=data_dict['TOPPING'][0])
-            berries, created = Berries.objects.get_or_create(berries=data_dict['BERRIES'][0])
-            decor, created = Decor.objects.get_or_create(decor=data_dict['DECOR'][0])
+            Levels_list = ['не выбрано', '1', '2', '3']
+            Forms_list = ['не выбрано', 'Круг', 'Квадрат', 'Прямоугольник']
+            Toppings_list = ['не выбрано', 'Без', 'Белый соус', 'Карамельный', 'Кленовый', 'Черничный', 'Молочный шоколад', 'Клубничный']
+            Berries_list = ['нет', 'Ежевика', 'Малина', 'Голубика', 'Клубника']
+            Decors_list = ['нет', 'Фисташки', 'Безе', 'Фундук', 'Пекан', 'Маршмеллоу', 'Марципан']
+
+            level, created = Level.objects.get_or_create(level=Levels_list[int(data_dict['LEVELS'][0])])
+            form, created = Form.objects.get_or_create(form=Forms_list[int(data_dict['FORM'][0])])
+            topping, created = Topping.objects.get_or_create(topping=Toppings_list[int(data_dict['TOPPING'][0])])
             cake = Cake.objects.create(
                 order=order,
                 level=level,
                 form=form,
                 topping=topping,
-                berries=berries,
-                decor=decor
             )
+            if 'BERRIES' in data_dict:
+                berries, created = Berries.objects.get_or_create(berries=Berries_list[int(data_dict['BERRIES'][0])])
+                cake.berries = berries
+                cake.save()
+            if 'DECOR' in data_dict:
+                decor, created = Decor.objects.get_or_create(decor=Decors_list[int(data_dict['DECOR'][0])])
+                cake.decor = decor
+                cake.save()
             if 'WORDS' in data_dict:
                 words, created = Words.objects.get_or_create(words=data_dict['WORDS'][0])
                 cake.words = words
@@ -79,20 +88,13 @@ def index(request):
 
 def lk(request):
     account_phone = request.session.get('logged_in_user')
-    logged_name = request.session.get('logged_name')
-    print(logged_name)
-    logged_email = request.session.get('logged_email')
-    print(logged_email)
     context = {}
     if account_phone:
         account = Account.objects.get(phone=account_phone)
+        for order in account.orders.all():
+            order.update_status_if_delivered()
+            order.sum_cost()
         context['account'] = account
-        # if logged_name:
-        #     name = account.orders.first().name
-        #     context['name'] = name
-        # if logged_email:
-        #     email = account.orders.first().email
-        #     context['email'] = email
     if context:
         return render(request, 'lk.html', context)
     else:
