@@ -2,6 +2,13 @@ from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 
 
+class Account(models.Model):
+    phone = models.CharField(
+        'Номер телефона',
+        max_length=30
+    )
+
+
 class Order(models.Model):
     name = models.CharField(
         'Имя клиента',
@@ -32,6 +39,13 @@ class Order(models.Model):
     )
     delivery_comments = models.TextField(
         max_length=250,
+        null=True
+    )
+    owner = models.ForeignKey(
+        Account,
+        verbose_name='Владелец',
+        on_delete=models.CASCADE,
+        related_name='orders',
         null=True
     )
 
