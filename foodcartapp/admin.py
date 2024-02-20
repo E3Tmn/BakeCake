@@ -5,7 +5,7 @@ from foodcartapp.models import Order, Cake
 
 class CakeInline(admin.TabularInline):
     model = Cake
-    fields = ['level', 'form', 'topping', 'berries', 'decor', 'words']
+    fields = ['level', 'form', 'topping', 'berries', 'decor', 'words', 'comment']
     extra = 0
 
 
