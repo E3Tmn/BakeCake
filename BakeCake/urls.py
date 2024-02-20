@@ -24,6 +24,6 @@ from foodcartapp.views import lk_order, index, lk
 urlpatterns = ([
     path('admin/', admin.site.urls),
     path('lk_order/', lk_order),
-    path('', index),
-    path('lk/', lk)
+    path('', index, name='index'),
+    path('lk/', lk, name='lk')
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT))

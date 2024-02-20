@@ -2,7 +2,7 @@ import json
 from urllib.parse import parse_qs
 
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 from foodcartapp.models import Order, Cake, Level, Topping, Berries, Decor, \
     Form, Words, Account
@@ -26,6 +26,7 @@ def index(request):
                 phone=data_dict['REG'][0]
             )
             request.session['logged_in_user'] = account.phone
+            return redirect('lk')
         else:
             order = Order.objects.create(
                 name=data_dict['NAME'][0],
