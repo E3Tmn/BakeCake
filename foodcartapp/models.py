@@ -11,6 +11,9 @@ class Account(models.Model):
         max_length=30
     )
 
+    def __str__(self):
+        return self.phone
+
 
 class Order(models.Model):
     name = models.CharField(
@@ -65,6 +68,9 @@ class Order(models.Model):
         default=0
     )
 
+    def __str__(self):
+        return f'{self.name} {self.pk}'
+
     def update_status_if_delivered(self):
         current_datetime = timezone.now()
         delivery_datetime = datetime.combine(self.date, self.time).astimezone()
@@ -96,6 +102,9 @@ class Level(models.Model):
         default=0
     )
 
+    def __str__(self):
+        return self.level
+
     def save(self, *args, **kwargs):
         if self.level == '1':
             self.cost = 400
@@ -124,6 +133,9 @@ class Form(models.Model):
         'Стоимость',
         default=0
     )
+
+    def __str__(self):
+        return self.form
 
     def save(self, *args, **kwargs):
         if self.form == 'Круг':
@@ -157,6 +169,9 @@ class Topping(models.Model):
         'Стоимость',
         default=0
     )
+
+    def __str__(self):
+        return self.topping
 
     def save(self, *args, **kwargs):
         if self.topping == 'Белый соус':
@@ -194,6 +209,9 @@ class Berries(models.Model):
         default=0
     )
 
+    def __str__(self):
+        return self.berries
+
     def save(self, *args, **kwargs):
         if self.berries == 'Ежевика':
             self.cost = 400
@@ -228,6 +246,9 @@ class Decor(models.Model):
         default=0
     )
 
+    def __str__(self):
+        return self.decor
+
     def save(self, *args, **kwargs):
         if self.decor == 'Фисташки':
             self.cost = 300
@@ -257,6 +278,9 @@ class Words(models.Model):
         'Стоимость',
         default=0
     )
+
+    def __str__(self):
+        return self.words
 
     def save(self, *args, **kwargs):
         if self.words:
